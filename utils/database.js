@@ -45,7 +45,8 @@ async function updateTrendByCity(WOEID, trends) {
         const filter = {woeid: WOEID};
         const updateDoc = {
             $set: {
-                trends: trends
+                trends: trends,
+                updatedAt: new Date().toLocaleString() + ", EST"
             }
         };
         return await collection.updateOne(filter, updateDoc);
