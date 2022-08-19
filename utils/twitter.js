@@ -18,7 +18,7 @@ async function getTrendsByCity(WOEID) {
         const res = await client.get("trends/place.json", {id: WOEID});
         return res[0]?.trends ?? [];
     } catch (e) {
-        console.log(e)
+        console.log(e.message)
     }
 }
 

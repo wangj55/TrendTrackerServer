@@ -3,7 +3,7 @@ require("dotenv").config();
 const {MongoClient, UpdateResult} = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.xa7xzw8.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+// console.log(uri);
 
 /**
  * Fetch target cities WOEIDs from database.
@@ -13,8 +13,8 @@ async function getCityWOEIDs() {
     const woeidArray = [];
     const client = new MongoClient(uri);
     try {
-        const database = client.db("trendData")
-        const collection = database.collection("cities")
+        const database = client.db("trendData");
+        const collection = database.collection("cities");
         const query = {};
         const projection = {_id: 0, woeid: 1};
 
@@ -40,8 +40,8 @@ async function updateTrendByCity(WOEID, trends) {
     // console.log(`Updating city with woeid=${WOEID}`);
     const client = new MongoClient(uri);
     try {
-        const database = client.db("trendData")
-        const collection = database.collection("cities")
+        const database = client.db("trendData");
+        const collection = database.collection("cities");
         const filter = {woeid: WOEID};
         const updateDoc = {
             $set: {
@@ -57,7 +57,30 @@ async function updateTrendByCity(WOEID, trends) {
     }
 }
 
+/**
+ * Get the trends of a city by WOEID from database.
+ * @param WOEID The WOEID of a city.
+ * @return {Promise<Document & {_id: InferIdType<Document>}>} A document about the city including trends.
+ */
+async function getTrendsByWOEID(WOEID) {
+    const client = new MongoClient(uri);
+    try {
+        const database = client.db("trendData");
+        const collection = database.collection("cities");
+        const query = {woeid: WOEID};
+        const options = {
+            projection: {_id: 0, trends: 1}
+        };
+        return await collection.findOne(query);
+    } catch (e) {
+        console.log(e.message);
+    } finally {
+        await client.close();
+    }
+}
+
 module.exports = {
     getCityWOEIDs: getCityWOEIDs,
-    updateTrendByCity: updateTrendByCity
+    updateTrendByCity: updateTrendByCity,
+    getTrendsByWOEID: getTrendsByWOEID
 }

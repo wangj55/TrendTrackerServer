@@ -9,7 +9,13 @@
 const {getCityWOEIDs, updateTrendByCity} = require("./database");
 const {getTrendsByCity} = require("./twitter");
 
-updateTrends();
+/**
+ * Setup automatic tasks.
+ */
+updateTrends().then();
+setInterval(() => {
+    updateTrends().then();
+}, 1000 * 60 * 30);
 
 async function updateTrends() {
     const WOEIDs = await getCityWOEIDs();
@@ -23,8 +29,4 @@ async function updateTrends() {
         modifiedCount += result.modifiedCount;
     }
     console.log(`${matchedCount} document(s) matched the filter, updated ${modifiedCount} document(s), ${new Date().toLocaleString()}, EST`);
-}
-
-module.exports = {
-    updateTrends: updateTrends
 }
