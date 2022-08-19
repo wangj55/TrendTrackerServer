@@ -9,16 +9,6 @@ const client = new Twitter({
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
-// /**
-//  * Fetch trends
-//  * @param WOEIDs An array of target cities' WOEIDs.
-//  */
-// async function getTrendsByCities(WOEIDs) {
-//     for (const WOEID in WOEIDs) {
-//         await getTrendsByCity(WOEID);
-//     }
-// }
-
 /**
  * Fetch trends of a city.
  * @param WOEID The WOEID of the target city.
@@ -33,6 +23,5 @@ async function getTrendsByCity(WOEID) {
 }
 
 module.exports = {
-    // getTrendsByCities: getTrendsByCities,
     getTrendsByCity: getTrendsByCity
 }

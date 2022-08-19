@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const {MongoClient, ServerApiVersion} = require('mongodb');
+const {MongoClient} = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.xa7xzw8.mongodb.net/?retryWrites=true&w=majority`;
 console.log(uri);
@@ -34,10 +34,10 @@ async function getCityWOEIDs() {
  * Update trends of a city.
  * @param WOEID The WOEID of the city.
  * @param trends The trends to be updated of the city.
- * @return {Promise<void>}
+ * @return {Promise<UpdateResult>} The update result.
  */
 async function updateTrendByCity(WOEID, trends) {
-    console.log(`updateing woeid=${WOEID}`);
+    console.log(`Updateing city with woeid=${WOEID}`);
     const client = new MongoClient(uri);
     try {
         const database = client.db("trendData")
@@ -48,9 +48,7 @@ async function updateTrendByCity(WOEID, trends) {
                 trends: trends
             }
         };
-
-        const result = await collection.updateOne(filter, updateDoc);
-        console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
+        return await collection.updateOne(filter, updateDoc);
     } catch (e) {
         console.log(e)
     } finally {
