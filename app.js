@@ -1,12 +1,13 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const { ToadScheduler, SimpleIntervalJob, AsyncTask } = require('toad-scheduler');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const {updateTrends} = require("./utils/updateData");
 
-var app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -15,5 +16,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+
+// setup automatic tasks
+const scheduler = new ToadScheduler();
+const task = new AsyncTask(
+    "update all trends",
+    updateTrends,
+    (err) => {console.log(err)}
+);
+const job = new SimpleIntervalJob({minutes: 30}, task);
+scheduler.addSimpleIntervalJob(job);
 
 module.exports = app;

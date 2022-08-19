@@ -22,7 +22,7 @@ async function updateTrends() {
         matchedCount += result.matchedCount;
         modifiedCount += result.modifiedCount;
     }
-    console.log(`${matchedCount} document(s) matched the filter, updated ${modifiedCount} document(s)`);
+    console.log(`${matchedCount} document(s) matched the filter, updated ${modifiedCount} document(s), ${new Date().toLocaleString()}, EST`);
 }
 
 module.exports = {
