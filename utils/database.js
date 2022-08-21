@@ -28,12 +28,24 @@ async function getCitiesProjection(projection = {}) {
         // await cursor.forEach((document) => {
         //     woeidArray.push(document.woeid);
         // });
-        return cursor.toArray()
+        // console.log(await cursor.toArray())
+        return await cursor.toArray()
     } finally {
         await client.close();
     }
     // return woeidArray;
 }
+
+/**
+ * Fetch all WOEIDs from database.
+ * @return {Promise<(number|*)[]>} An array of WOEIDs.
+ */
+async function getWoeids() {
+    const documents = await getCitiesProjection({woeid: 1})
+    // console.log(`document = ${documents}`)
+    return documents.map(object => object.woeid)
+}
+
 
 /**
  * Update trends of a city.
@@ -86,6 +98,7 @@ async function getTrendsByWOEID(WOEID) {
 
 module.exports = {
     getCitiesProjection: getCitiesProjection,
+    getWoeids: getWoeids,
     updateTrendByCity: updateTrendByCity,
     getTrendsByWOEID: getTrendsByWOEID
 }
