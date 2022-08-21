@@ -3,7 +3,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const trendsRouter = require('./routes/trends');
+const trendsRouter = require('./routes/trends')
+const citiesRouter = require('./routes/cities')
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/trends', trendsRouter);
+app.use('/cities', citiesRouter);
 
 module.exports = app;

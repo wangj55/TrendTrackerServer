@@ -3,31 +3,36 @@ require("dotenv").config();
 const {MongoClient, UpdateResult} = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.xa7xzw8.mongodb.net/?retryWrites=true&w=majority`;
+
 // console.log(uri);
 
 /**
- * Fetch target cities WOEIDs from database.
- * @returns {Promise<Number[]>} A list of city WOEID.
+ * Fetch target cities from database.
+ * @param projection The projection object if you want projected document. e.g {woeid: 1}
+ * @return {Promise<*[]>} Cities projection.
  */
-async function getCityWOEIDs() {
-    const woeidArray = [];
+async function getCitiesProjection(projection = {}) {
+    // const woeidArray = [];
     const client = new MongoClient(uri);
     try {
         const database = client.db("trendData");
         const collection = database.collection("cities");
         const query = {};
-        const projection = {_id: 0, woeid: 1};
 
-        const cursor = await collection.find(query).project(projection);
+        let cursor = await collection.find(query).project(projection)
+        if (Object.keys(projection).length >= 0) {
+            cursor = await cursor.project(projection)
+        }
 
         // await cursor.forEach(console.dir);
-        await cursor.forEach((document) => {
-            woeidArray.push(document.woeid);
-        });
+        // await cursor.forEach((document) => {
+        //     woeidArray.push(document.woeid);
+        // });
+        return cursor.toArray()
     } finally {
         await client.close();
     }
-    return woeidArray;
+    // return woeidArray;
 }
 
 /**
@@ -80,7 +85,7 @@ async function getTrendsByWOEID(WOEID) {
 }
 
 module.exports = {
-    getCityWOEIDs: getCityWOEIDs,
+    getCitiesProjection: getCitiesProjection,
     updateTrendByCity: updateTrendByCity,
     getTrendsByWOEID: getTrendsByWOEID
 }
