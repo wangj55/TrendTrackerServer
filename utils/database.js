@@ -40,10 +40,18 @@ async function getCitiesProjection(projection = {}) {
  * Fetch all WOEIDs from database.
  * @return {Promise<(number|*)[]>} An array of WOEIDs.
  */
-async function getWoeids() {
+async function getCitiesWoeids() {
     const documents = await getCitiesProjection({woeid: 1})
     // console.log(`document = ${documents}`)
     return documents.map(object => object.woeid)
+}
+
+/**
+ * Get cities information, excluding trends.
+ * @return {Promise<*[]>} An array of cities information.
+ */
+async function getCitiesInfo() {
+    return await getCitiesProjection({trends: 0})
 }
 
 
@@ -98,7 +106,8 @@ async function getTrendsByWOEID(WOEID) {
 
 module.exports = {
     getCitiesProjection: getCitiesProjection,
-    getWoeids: getWoeids,
+    getCitiesWoeids: getCitiesWoeids,
+    getCitiesInfo: getCitiesInfo,
     updateTrendByCity: updateTrendByCity,
     getTrendsByWOEID: getTrendsByWOEID
 }

@@ -6,7 +6,7 @@
  * 3. Update trends of cities to database
  */
 
-const {updateTrendByCity, getWoeids} = require("./database");
+const {updateTrendByCity, getCitiesWoeids} = require("./database");
 const {getTrendsByCity} = require("./twitter");
 
 /**
@@ -18,7 +18,7 @@ setInterval(() => {
 }, 1000 * 60 * 30);
 
 async function updateTrends() {
-    const WOEIDs = await getWoeids();
+    const WOEIDs = await getCitiesWoeids();
     console.log(`Retrieved woeids from database: ${WOEIDs}`);
     let matchedCount = 0;
     let modifiedCount = 0;
