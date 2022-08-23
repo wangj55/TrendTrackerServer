@@ -93,9 +93,6 @@ async function getTrendsByWOEID(WOEID) {
         const database = client.db("trendData");
         const collection = database.collection("cities");
         const query = {woeid: WOEID};
-        const options = {
-            projection: {_id: 0, trends: 1}
-        };
         return await collection.findOne(query);
     } catch (e) {
         console.log(e.message);
