@@ -1,10 +1,11 @@
-require("dotenv").config();
+require("dotenv").config()
 
-const {MongoClient, UpdateResult} = require('mongodb');
+const {MongoClient, UpdateResult} = require('mongodb')
+const moment = require("moment-timezone")
 
-const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.xa7xzw8.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.xa7xzw8.mongodb.net/?retryWrites=true&w=majority`
 
-// console.log(uri);
+// console.log(uri)
 
 /**
  * Fetch target cities from database.
@@ -12,28 +13,28 @@ const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB
  * @return {Promise<*[]>} Cities projection.
  */
 async function getCitiesProjection(projection = {}) {
-    // const woeidArray = [];
-    const client = new MongoClient(uri);
+    // const woeidArray = []
+    const client = new MongoClient(uri)
     try {
-        const database = client.db("trendData");
-        const collection = database.collection("cities");
-        const query = {};
+        const database = client.db("trendData")
+        const collection = database.collection("cities")
+        const query = {}
 
         let cursor = await collection.find(query).project(projection)
         if (Object.keys(projection).length >= 0) {
             cursor = await cursor.project(projection)
         }
 
-        // await cursor.forEach(console.dir);
+        // await cursor.forEach(console.dir)
         // await cursor.forEach((document) => {
-        //     woeidArray.push(document.woeid);
-        // });
+        //     woeidArray.push(document.woeid)
+        // })
         // console.log(await cursor.toArray())
         return await cursor.toArray()
     } finally {
-        await client.close();
+        await client.close()
     }
-    // return woeidArray;
+    // return woeidArray
 }
 
 /**
@@ -62,23 +63,23 @@ async function getCitiesInfo() {
  * @return {Promise<UpdateResult>} The update result.
  */
 async function updateTrendByCity(WOEID, trends) {
-    // console.log(`Updating city with woeid=${WOEID}`);
-    const client = new MongoClient(uri);
+    // console.log(`Updating city with woeid=${WOEID}`)
+    const client = new MongoClient(uri)
     try {
-        const database = client.db("trendData");
-        const collection = database.collection("cities");
-        const filter = {woeid: WOEID};
+        const database = client.db("trendData")
+        const collection = database.collection("cities")
+        const filter = {woeid: WOEID}
         const updateDoc = {
             $set: {
                 trends: trends,
-                updatedAt: new Date().toLocaleString("en-US", {timeZone: "EST"}) + ", EST"
+                updatedAt: getCurrentTimeInEST()
             }
-        };
-        return await collection.updateOne(filter, updateDoc);
+        }
+        return await collection.updateOne(filter, updateDoc)
     } catch (err) {
         console.log(err.message)
     } finally {
-        await client.close();
+        await client.close()
     }
 }
 
@@ -88,17 +89,24 @@ async function updateTrendByCity(WOEID, trends) {
  * @return {Promise<Document & {_id: InferIdType<Document>}>} A document about the city including trends.
  */
 async function getTrendsByWOEID(WOEID) {
-    const client = new MongoClient(uri);
+    const client = new MongoClient(uri)
     try {
-        const database = client.db("trendData");
-        const collection = database.collection("cities");
-        const query = {woeid: WOEID};
-        return await collection.findOne(query);
+        const database = client.db("trendData")
+        const collection = database.collection("cities")
+        const query = {woeid: WOEID}
+        return await collection.findOne(query)
     } catch (err) {
-        console.log(err.message);
+        console.log(err.message)
     } finally {
-        await client.close();
+        await client.close()
     }
+}
+
+function getCurrentTimeInEST() {
+    const d = new Date()
+    const timeZone = "America/New_York"
+    const dateTimeFormat = "YYYY-MM-DD hh:mm:ss a z"
+    return moment(d).tz(timeZone).format(dateTimeFormat)
 }
 
 module.exports = {
