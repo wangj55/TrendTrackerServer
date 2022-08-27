@@ -75,8 +75,8 @@ async function updateTrendByCity(WOEID, trends) {
             }
         };
         return await collection.updateOne(filter, updateDoc);
-    } catch (e) {
-        console.log(e)
+    } catch (err) {
+        console.log(err.message)
     } finally {
         await client.close();
     }
@@ -94,8 +94,8 @@ async function getTrendsByWOEID(WOEID) {
         const collection = database.collection("cities");
         const query = {woeid: WOEID};
         return await collection.findOne(query);
-    } catch (e) {
-        console.log(e.message);
+    } catch (err) {
+        console.log(err.message);
     } finally {
         await client.close();
     }
